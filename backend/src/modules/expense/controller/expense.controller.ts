@@ -11,6 +11,8 @@ import {
 } from '@nestjs/common';
 import { ExpenseService } from '../service/expense.service';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { GetUser } from 'src/modules/auth/decorator/user.decorator';
+import { User } from 'src/modules/user/entity/user.entity';
 
 @ApiTags('Expense')
 @ApiBearerAuth()
@@ -19,27 +21,27 @@ export class ExpenseController {
   constructor(private expenseService: ExpenseService) {}
 
   @Get()
-  getAll() {
+  getAll(@GetUser() user: User) {
     try {
-      return this.expenseService.getAll();
+      return this.expenseService.getAll(user);
     } catch (error) {
       return error;
     }
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
+  getById(@GetUser() user: User, @Param('id') id: string) {
     try {
-      return this.expenseService.getById(id);
+      return this.expenseService.getById(user, id);
     } catch (error) {
       return error;
     }
   }
 
   @Post()
-  create(@Body(ValidationPipe) expense: ExpenseDto) {
+  create(@GetUser() user: User, @Body(ValidationPipe) expense: ExpenseDto) {
     try {
-      return this.expenseService.create(expense);
+      return this.expenseService.create(user, expense);
     } catch (error) {
       return error;
     }
@@ -47,18 +49,22 @@ export class ExpenseController {
 
   @Put(':id')
   @ApiBody({ type: ExpenseDto })
-  update(@Param('id') id: string, @Body() expense: Partial<ExpenseDto>) {
+  update(
+    @GetUser() user: User,
+    @Param('id') id: string,
+    @Body() expense: Partial<ExpenseDto>,
+  ) {
     try {
-      return this.expenseService.update(id, expense);
+      return this.expenseService.update(user, id, expense);
     } catch (error) {
       return error;
     }
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
+  delete(@GetUser() user: User, @Param('id') id: string) {
     try {
-      return this.expenseService.delete(id);
+      return this.expenseService.delete(user, id);
     } catch (error) {
       return error;
     }
