@@ -3,8 +3,9 @@ import { responceData } from './../../../utils/responce-data.util';
 import { Expense } from '../entity/expense.entity';
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { User } from 'src/modules/user/entity/user.entity';
+import { ExpenseFilterDto } from '../dto/expenceFilter.dto';
 
 @Injectable()
 export class ExpenseService {
@@ -13,11 +14,19 @@ export class ExpenseService {
     private readonly expenseRepository: Repository<Expense>,
   ) {}
 
-  async getAll(user: User) {
+  async getAll(user: User, query: ExpenseFilterDto) {
     try {
-      const [expence, count] = await this.expenseRepository.findAndCount({
-        where: { user },
-      });
+      const whereCondition = { user };
+
+      if (query.date) {
+        whereCondition['expenseDate'] = query.date;
+      }
+      const filterOptions: FindManyOptions = {
+        where: whereCondition,
+      };
+      const [expence, count] = await this.expenseRepository.findAndCount(
+        filterOptions,
+      );
       const data = { expence, total: count };
 
       return responceData('Get Data Success', HttpStatus.OK, data);

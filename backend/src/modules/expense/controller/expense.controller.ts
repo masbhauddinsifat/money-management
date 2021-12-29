@@ -8,11 +8,13 @@ import {
   Put,
   Delete,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { ExpenseService } from '../service/expense.service';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/modules/auth/decorator/user.decorator';
 import { User } from 'src/modules/user/entity/user.entity';
+import { ExpenseFilterDto } from '../dto/expenceFilter.dto';
 
 @ApiTags('Expense')
 @ApiBearerAuth()
@@ -21,9 +23,9 @@ export class ExpenseController {
   constructor(private expenseService: ExpenseService) {}
 
   @Get()
-  getAll(@GetUser() user: User) {
+  getAll(@GetUser() user: User, @Query() query: ExpenseFilterDto) {
     try {
-      return this.expenseService.getAll(user);
+      return this.expenseService.getAll(user, query);
     } catch (error) {
       return error;
     }
