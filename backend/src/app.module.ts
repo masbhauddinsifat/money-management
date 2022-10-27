@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ExpenseModule } from './modules/expense/expense.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { UserModule } from './modules/user/user.module';
-import { UtilsModule } from './modules/uitls/utils.module';
 import { APP_GUARD } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guard/jwt.gurad';
+import { ExpenseModule } from './modules/expense/expense.module';
+import { UtilsModule } from './modules/uitls/utils.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [

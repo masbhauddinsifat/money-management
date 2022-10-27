@@ -1,11 +1,11 @@
-import { ExpenseDto } from './../dto/expence.dto';
-import { responceData } from './../../../utils/responce-data.util';
-import { Expense } from '../entity/expense.entity';
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
 import { User } from 'src/modules/user/entity/user.entity';
+import { FindManyOptions, Repository } from 'typeorm';
 import { ExpenseFilterDto } from '../dto/expenceFilter.dto';
+import { Expense } from '../entity/expense.entity';
+import { responceData } from './../../../utils/responce-data.util';
+import { ExpenseDto } from './../dto/expence.dto';
 
 @Injectable()
 export class ExpenseService {
@@ -38,7 +38,7 @@ export class ExpenseService {
   async getById(user: User, id: string) {
     try {
       const data = await this.expenseRepository.findOne({
-        where: { user, id },
+        where: { user: { id: user.id }, id },
       });
 
       if (!data) {
@@ -68,7 +68,7 @@ export class ExpenseService {
   async update(user: User, id: string, expense: Partial<ExpenseDto>) {
     try {
       const res = await this.expenseRepository.update(
-        { id, user },
+        { id, user: { id: user.id } },
         { ...expense },
       );
 
@@ -86,7 +86,10 @@ export class ExpenseService {
 
   async delete(user: User, id: string) {
     try {
-      const delRes = await this.expenseRepository.softDelete({ user, id });
+      const delRes = await this.expenseRepository.delete({
+        id,
+        user: { id: user.id },
+      });
       if (delRes.affected) {
         return responceData('Delete Success', HttpStatus.OK);
       }

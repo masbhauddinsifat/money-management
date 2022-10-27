@@ -1,6 +1,3 @@
-import { UpdateUserDto } from './../dto/user.dto';
-import { Repository } from 'typeorm';
-import { User } from '../entity/user.entity';
 import {
   BadRequestException,
   HttpStatus,
@@ -9,9 +6,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { responceData } from 'src/utils/responce-data.util';
 import { ChangePasswordDTO } from 'src/modules/auth/dto/changePassword.dto';
 import { hashedPassword } from 'src/utils/bcript.util';
+import { responceData as responseData } from 'src/utils/responce-data.util';
+import { Repository } from 'typeorm';
+import { User } from '../entity/user.entity';
+import { UpdateUserDto } from './../dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -25,7 +25,7 @@ export class UserService {
       const [users, count] = await this.userRepository.findAndCount({});
       const data = { users, total: count };
 
-      return responceData('Get User Success', HttpStatus.OK, data);
+      return responseData('Get User Success', HttpStatus.OK, data);
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -39,7 +39,7 @@ export class UserService {
         return new NotFoundException('User Not Found');
       }
 
-      return responceData('Get User Success', HttpStatus.OK, user);
+      return responseData('Get User Success', HttpStatus.OK, user);
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -51,7 +51,7 @@ export class UserService {
 
       if (updateRes.affected) {
         const findUser = await this.userRepository.findOne({ where: { id } });
-        return responceData('Update User Success', HttpStatus.OK, findUser);
+        return responseData('Update User Success', HttpStatus.OK, findUser);
       } else {
         return new BadRequestException('Update User Failed');
       }
@@ -65,7 +65,7 @@ export class UserService {
       const res = await this.userRepository.delete(id);
 
       if (res.affected) {
-        return responceData('Delete User Success', HttpStatus.OK, res);
+        return responseData('Delete User Success', HttpStatus.OK, res);
       } else {
         return new BadRequestException('Delete User Failed');
       }
@@ -112,7 +112,7 @@ export class UserService {
           where: { email: user.email },
         });
 
-        return responceData('Password Update Success', HttpStatus.OK, data);
+        return responseData('Password Update Success', HttpStatus.OK, data);
       } else {
         return new BadRequestException();
       }

@@ -1,14 +1,15 @@
-import { Expense } from './../../expense/entity/expense.entity';
 import { compare } from 'bcrypt';
 import {
   BaseEntity,
+  Column,
   CreateDateColumn,
+  Entity,
   OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { Column, Entity } from 'typeorm';
-import { PrimaryGeneratedColumn } from 'typeorm';
+import { Expense } from './../../expense/entity/expense.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -33,7 +34,10 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   otp: number;
 
-  @OneToMany(() => Expense, (expense) => expense.user)
+  @OneToMany(() => Expense, (expense) => expense.user, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   expense: Expense[];
 
   @CreateDateColumn()
