@@ -8,9 +8,11 @@ import { ExpenseModule } from './modules/expense/expense.module';
 import { UtilsModule } from './modules/uitls/utils.module';
 import { UserModule } from './modules/user/user.module';
 
+const environment = process.env.NODE_ENV || 'development';
+const envFilePath = [`${environment}.env`];
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: ['dev.env'] }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
